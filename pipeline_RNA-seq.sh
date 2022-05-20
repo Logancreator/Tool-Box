@@ -31,7 +31,7 @@ samplename=${fq_1%_1.fq.gz*}
 echo "Sample name is $samplename"       
 
 # specify the number of cores to use
-cores=20
+cores=2
 
 # directory with the genome and transcriptome index files + name of the gene annotation file
  /public/software/env01/bin/STAR  \
