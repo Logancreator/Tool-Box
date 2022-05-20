@@ -1,0 +1,9 @@
+name,info,name,info
+total_reads,84659948.0,total_reads,84659948.0
+total_bases,8275806660.0,total_bases,8275806660.0
+q20_bases,8113497797.0,q20_bases,8113497797.0
+q30_bases,7810083692.0,q30_bases,7810083692.0
+q20_rate,0.980388,q20_rate,0.980388
+q30_rate,0.943725,q30_rate,0.943725
+gc_content,0.477949,gc_content,0.477949
+duplication,0.140693,duplication,0.140693
