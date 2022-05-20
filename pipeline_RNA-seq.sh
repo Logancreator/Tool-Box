@@ -19,7 +19,7 @@ START=$(date +%s.%N)
 
 
 # Enter the fastq path
-file_path=/md01/changjy/data/online_data/raw/
+file_path=/public/home/changjianye/project/magang/gz/RNAseq/gz/
 cd $file_path
 
 # initialize a variable with an intuitive name to store the name of the input fastq file
@@ -27,28 +27,29 @@ fq_1=$1
 fq_2=$2
 
 # grab base of filename for naming outputs
-#SRR10992583_1.fastq.gz
-samplename=${fq_1%_1.fastq.gz*}
+samplename=${fq_1%_1.fq.gz*}
 echo "Sample name is $samplename"       
 
 # specify the number of cores to use
 cores=20
 
 # directory with the genome and transcriptome index files + name of the gene annotation file
-# STAR  \
-# --runMode genomeGenerate \
-# --genomeDir /md01/changjy/data/Goose/Goose_bulk/ref/ncbi_ref/STAR_index \
-# --runThreadN 10 \
-# --genomeFastaFiles     /md01/changjy/data/Goose/Goose_bulk/ref/ncbi_ref/GCF_000971095.1_AnsCyg_PRJNA183603_v1.0_genomic.fna \
-# --sjdbGTFfile /md01/changjy/data/Goose/Goose_bulk/ref/ncbi_ref/GCF_000971095.1_AnsCyg_PRJNA183603_v1.0_genomic.gtf
+ /public/software/env01/bin/STAR  \
+ --runMode genomeGenerate \
+ --genomeDir /public/home/changjianye/project/duck/STAR_index \
+ --runThreadN 1 \
+ --genomeFastaFiles     /public/home/changjianye/project/duck/GCF_000971095.1_AnsCyg_PRJNA183603_v1.0_genomic.fna \
+ --sjdbGTFfile /public/home/changjianye/project/duck/GCF_000971095.1_AnsCyg_PRJNA183603_v1.0_genomic.gtf
 
-genome=/md01/changjy/data/quail/ref/ncbi_dataset/STAR_index
-transcriptome=/md01/changjy/data/quail/ref/ncbi_dataset/salmon_index
-gtf=/md01/changjy/data/quail/ref/ncbi_dataset/GCF_001577835.2_Coturnix_japonica_2.1_genomic.gtf
+#salmon index -t Homo_sapiens.GRCh38.cdna.all.fa.gz -i homo38_index
+
+genome=/public/home/changjianye/project/duck/STAR_index
+transcriptome=/public/home/changjianye/project/duck/GCF_000971095.1_AnsCyg_PRJNA183603_v1.0_genomic_index
+gtf= /public/home/changjianye/project/duck/GCF_000971095.1_AnsCyg_PRJNA183603_v1.0_genomic.gtf
 
 # make all of the output directories
 # The -p option means no error if existing, make parent directories as needed
-output_dir=/md01/changjy/data/online_data/RNA-seq/$samplename/
+output_dir=/public/home/changjianye/project/magang/gz/RNAseq/gz/$samplename/
 mkdir -p ${output_dir}fastp
 mkdir -p ${output_dir}STAR
 mkdir -p ${output_dir}salmon
@@ -61,16 +62,13 @@ salmon_out=${output_dir}salmon/
 qualimap_out=${output_dir}qualimap/
 
 
-## Activate conda  environment
-source /md01/changjy/software/miniconda2/bin/activate atac
-
 ## set not to open a GUI when running Qualimap
 unset DISPLAY
 
 echo "Starting QC and trimming for $samplename"
 
 ## Quality control and read trimming by fastp
-~/software/miniconda2/envs/atac/bin/fastp -i ${fq_1} \
+/public/home/changjianye/anaconda3/envs/cuttag/bin/fastp -i ${fq_1} \
 	-I ${fq_2} \
 	-o ${fastp_out}trimmed_${samplename}_R1.fastq.gz \
 	-O ${fastp_out}trimmed_${samplename}_R2.fastq.gz \
@@ -79,7 +77,7 @@ echo "Starting QC and trimming for $samplename"
 	-j ${fastp_out}${samplename}_fastp.json
 
 ## Mapping reads to the genome by STAR
-~/software/STAR-2.7.4a/bin/Linux_x86_64/STAR --runThreadN ${cores} \
+/public/software/env01/bin/STAR --runThreadN ${cores} \
 	--genomeDir ${genome} \
 	--readFilesIn ${fastp_out}trimmed_${samplename}_R1.fastq.gz ${fastp_out}trimmed_${samplename}_R2.fastq.gz \
 	--readFilesCommand zcat \
@@ -87,7 +85,7 @@ echo "Starting QC and trimming for $samplename"
 	--outSAMtype BAM Unsorted
 
 ## Sort BAM files
-~/software/miniconda2/envs/atac/bin/samtools sort -@ 4 -O bam -o ${STAR_out}${samplename}_sorted.bam ${STAR_out}${samplename}Aligned.out.bam
+/public/software/env01/bin/samtools sort -@ 4 -O bam -o ${STAR_out}${samplename}_sorted.bam ${STAR_out}${samplename}Aligned.out.bam
 rm ${STAR_out}${samplename}Aligned.out.bam
 
 
@@ -96,7 +94,7 @@ if [! -d ${qualimap_out}${samplename} ];then
 	mkdir ${qualimap_out}${samplename}
 fi
 
-~/software/miniconda2/envs/atac/bin/qualimap rnaseq \
+/public/home/changjianye/anaconda3/bin/qualimap rnaseq \
 	-bam ${STAR_out}${samplename}_sorted.bam \
 	-gtf ${gtf} \
 	-outdir ${qualimap_out}${samplename} \
@@ -111,7 +109,7 @@ if [! -d ${salmon_out}${samplename} ];then
 	mkdir ${salmon_out}${samplename}
 fi
 
-/md01/changjy/software/salmon-1.5.2_linux_x86_64/bin/./salmon quant -i ${transcriptome} -l A \
+/public/home/changjianye/anaconda3/bin/salmon quant -i ${transcriptome} -l A \
 	-1 ${fastp_out}trimmed_${samplename}_R1.fastq.gz \
 	-2 ${fastp_out}trimmed_${samplename}_R2.fastq.gz \
 	--gcBias --validateMappings --seqBias -p ${cores} -o ${salmon_out}${samplename}
