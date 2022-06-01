@@ -40,20 +40,24 @@ def File_path(*args):
         list.append(file)
     return list
 def Writer(things,csv_name):
-    current_dir = os.path.abspath('C:\\Users\\Jeff\\OneDrive\\桌面\\')
+    current_dir = os.path.abspath('C:\\Users\\Jeff\\OneDrive\\桌面\\Goose_ATAC_info\\ATAC-seq\\')
     file_name = os.path.join(current_dir,csv_name)
     things.to_csv(file_name,index=None,index_label=None)
 
 if __name__ == '__main__':
-    json_path=File_path('C:\\Users\\Jeff\\OneDrive\\桌面\\L5-P_fastp.json',
-        'C:\\Users\\Jeff\\OneDrive\\桌面\\L3-P_fastp.json',
-        'C:\\Users\\Jeff\\OneDrive\\桌面\\L2-P_fastp.json',
-        'C:\\Users\\Jeff\\OneDrive\\桌面\\B6-P_fastp.json',
-        'C:\\Users\\Jeff\\OneDrive\\桌面\\B5-P_fastp.json',
-        'C:\\Users\\Jeff\\OneDrive\\桌面\\B4-P_fastp.json')
+    my_dir="C:\\Users\\Jeff\\OneDrive\\桌面\\Goose_ATAC_info\\ATAC-seq\\fastp"
+    os.chdir(my_dir)
+    json_path=[]
+    for root, dirs, files in os.walk(my_dir):
+        for file in files:
+            if file.endswith(".json"):
+                json_path.append(os.path.join(root, file))
     df = pd.DataFrame()
     for i in range(len(json_path)):
         data=Read_json(json_path[i])
         extracted_info=Extract_info(json_path[i].split("\\")[-1]+"_name",json_path[i].split("\\")[-1]+"_info")
         df=Df_Append()
-        Writer(df,"fastp_json.csv")
+        Writer(df,os.path.join(root,"Geese_DAP_fastp_json.csv"))
+
+
+
