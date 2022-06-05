@@ -37,7 +37,7 @@ if __name__ == '__main__' :
     fa_file = sys.argv[1]
 
     aList,res=File_reader(fa_file)
-    
+
     print("Effective Genome Size :",res )
 
     GC=GC_content(aList)
