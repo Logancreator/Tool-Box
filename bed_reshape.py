@@ -1,8 +1,7 @@
 import pandas as pd
-import numpy as np
 import os
+import argparse
 
-os.chdir("C:\\Users\\Jeff\\OneDrive\\桌面\\Goose_ATAC_info\\")
 
 def read_bed(file):
 
@@ -20,14 +19,22 @@ def read_fai(file):
 
     return df
 
-if __name__ == '__main__':
-    bed_path="diffbind\\Lay_vs_Breed_deseq2_down.bed"
+def main():
+    parser = argparse.ArgumentParser(description='bed reshape')
+    parser.add_argument('--bed', type=str, required=True, help='bed file needed input')
+    parser.add_argument('--fai', type=str, required=True,  help='fai file needed input')
+    parser.add_argument('--out', type=str, required=True,  help='bed file output')
+    args = parser.parse_args()
 
-    bed_opth="diffbind\\Lay_vs_Breed_deseq2_down_reshape.bed"
+    bed_path=args.bed
+
+    bed_opth=args.out
+
+    fai_path=args.fai
 
     bed=read_bed(bed_path)
 
-    fai=read_fai("GCF_000971095.1_AnsCyg_PRJNA183603_v1.0_genomic.fa.fai")
+    fai=read_fai(fai_path)
 
     for row in bed.itertuples():
         if row.end >= fai[fai['chr'] == row.chr]["length"].iloc[0]:
@@ -37,3 +44,17 @@ if __name__ == '__main__':
             bed.loc[row.Index,"start"]=1
     
     bed.to_csv(bed_opth,index=0,header=0,sep="\t")
+    print("\n" * 5)
+
+if __name__ == '__main__':
+    try:
+        main()
+        
+        print("bed reshape sucessfully!")
+
+    except (ValueError, ArithmeticError):
+        print("\n" * 5)
+        print("A number format exception occurred in the program!")
+    except :
+        print("\n" * 5) 
+        print("unknown abnormal")

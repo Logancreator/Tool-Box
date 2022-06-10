@@ -44,6 +44,9 @@ def Writer(things,csv_name):
     file_name = os.path.join(current_dir,csv_name)
     things.to_csv(file_name,index=None,index_label=None)
 
+
+
+
 if __name__ == '__main__':
     my_dir="C:\\Users\\Jeff\\OneDrive\\桌面\\Goose_ATAC_info\\ATAC-seq\\fastp"
     os.chdir(my_dir)
@@ -57,7 +60,7 @@ if __name__ == '__main__':
         data=Read_json(json_path[i])
         extracted_info=Extract_info(json_path[i].split("\\")[-1]+"_name",json_path[i].split("\\")[-1]+"_info")
         df=Df_Append()
-        Writer(df,os.path.join(root,"Geese_DAP_fastp_json.csv"))
+        Writer(df,os.path.join(root,"Geese_ATAC_fastp_json.csv"))
 
 
 
