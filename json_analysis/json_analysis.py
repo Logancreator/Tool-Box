@@ -11,6 +11,7 @@ def Extract_info(col_name,col_info):
     value=[]
     key=['before_total_reads','before_total_bases','before_q20_bases','before_q30_bases','before_q20_rate','before_q30_rate','before_gc_content','before_duplication','after_total_reads','after_total_bases','after_q20_bases','after_q30_bases','after_q20_rate','after_q30_rate','after_gc_content','after_duplication']
     everyKey="summary"
+
     value.append(data.get(everyKey).get('before_filtering').get('total_reads'))
     value.append(data.get(everyKey).get('before_filtering').get('total_bases'))
     value.append(data.get(everyKey).get('before_filtering').get('q20_bases'))
@@ -19,6 +20,7 @@ def Extract_info(col_name,col_info):
     value.append(data.get(everyKey).get('before_filtering').get('q30_rate'))
     value.append(data.get(everyKey).get('before_filtering').get('gc_content'))
     value.append(data.get('duplication').get('rate'))
+
     value.append(data.get(everyKey).get('after_filtering').get('total_reads'))
     value.append(data.get(everyKey).get('after_filtering').get('total_bases'))
     value.append(data.get(everyKey).get('after_filtering').get('q20_bases'))
