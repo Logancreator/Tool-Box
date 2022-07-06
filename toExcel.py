@@ -6,9 +6,10 @@ import glob
 import pandas as pd
 import pdfplumber
 
-
-people_organ = {}
-
+center=pd.read_excel("G:\\篮球赛发票\\unlock\\证明材料\\奖项统计v2.4.xlsx")
+strlist1=center["姓名"].values.tolist()
+strlist2=center["所属队伍"].values.tolist()
+people_organ=dict(zip(strlist1,strlist2)) #{'k2': 'b', 'k1': 'a'}
 
 class PDF:
 
@@ -47,7 +48,7 @@ class PDF:
         self.people = pd.read_csv(buff, sep=' ', index_col='序号')
         self.people['证件号码'] = self.people['证件号码'].astype(str)
         self.people['保险日期'] = self.start.strftime('%Y-%m-%d')
-        self.people['所属中心'] = self.people['被保险人'].map(lambda x: people_organ.get(x,x))
+        self.people['所属队伍'] = self.people['被保险人'].map(lambda x: people_organ.get(x,x))
         self.people['签名'] = ''
         return self.people
 
@@ -89,8 +90,8 @@ def detect_pdfs(dirname, pdfs):
 
 if __name__ == '__main__':
     # 输出的excel文件目录
-    save_path = 'G:\\篮球赛发票\\excel'
-    insurance_path = 'G:\\篮球赛发票\\safe'
+    save_path = 'G:\\篮球赛发票\\unlock\\证明材料\\保险信息统计\\excel'
+    insurance_path = 'G:\\篮球赛发票\\unlock\\证明材料\\保险信息统计\\'
     if not os.path.exists(save_path):
         os.makedirs(save_path)
     pdfs = []
@@ -98,7 +99,7 @@ if __name__ == '__main__':
     print(pdfs)
     for path in pdfs:
         pdf = PDF(path)()
-        print(pdf)
+        #print(pdf)
         if pdf.people is None:
             continue
         pdf.to_csv(
@@ -107,6 +108,6 @@ if __name__ == '__main__':
                 pdf.start.strftime('%Y%m%d') +
                 os.path.basename(path)
             ) + '.csv',
-            columns = ['被保险人','性别','所属中心','保险日期','签名']
+            columns = ['被保险人','性别','所属队伍','保险日期','签名']
         )
         print(path)
