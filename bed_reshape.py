@@ -1,8 +1,6 @@
 import pandas as pd
 import os
 import argparse
-
-
 def read_bed(file):
 
     df=pd.read_csv(file,sep="\t",header=None)
@@ -49,9 +47,7 @@ def main():
 if __name__ == '__main__':
     try:
         main()
-        
         print("bed reshape sucessfully!")
-
     except (ValueError, ArithmeticError):
         print("\n" * 5)
         print("A number format exception occurred in the program!")
